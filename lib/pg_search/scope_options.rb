@@ -76,14 +76,19 @@ module PgSearch
     private
 
     def subquery
-      model
+      subquery_str =
+        model
         .unscoped
         .select(model.arel_table[model.primary_key].as("pg_search_id"))
         .select(rank.as("rank"))
         .joins(subquery_join)
         .where(conditions)
-        .limit(nil)
-        .offset(nil)
+
+      if with_tenant?
+        subquery_str = subquery_str.where("#{quoted_table_name}.\"tenant_id\" = #{config.with_tenant_id}")
+      end
+
+      subquery_str.limit(nil).offset(nil)
     end
 
     def conditions
