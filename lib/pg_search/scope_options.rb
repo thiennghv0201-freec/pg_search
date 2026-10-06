@@ -91,6 +91,10 @@ module PgSearch
       subquery_str.limit(nil).offset(nil)
     end
 
+    def with_tenant?
+      config.with_tenant_id.to_i.positive?
+    end
+
     def conditions
       expressions =
         config.features
